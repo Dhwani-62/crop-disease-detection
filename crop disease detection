@@ -1,0 +1,42 @@
+import zipfile
+import os
+import shutil # Import shutil for rmtree
+
+from google.colab import drive
+drive.mount('/content/drive')
+
+zip_path = '/content/drive/MyDrive/crop_disease_data.zip'
+
+extract_path = '/content/drive/MyDrive/crop_disease_data/extracted'
+
+if os.path.exists(extract_path):
+    print(f"Removing existing extraction directory: {extract_path}")
+    shutil.rmtree(extract_path)
+    print("Existing directory removed.")
+
+print(f"Creating extraction directory: {extract_path}")
+os.makedirs(extract_path, exist_ok=True)
+print("Extraction directory created (or already exists).")
+
+# Check if the zip file exists before attempting to extract
+if not os.path.exists(zip_path):
+    print(f"Error: The zip file was not found at {zip_path}")
+    print("Please verify the file path and ensure the file exists in your Google Drive.")
+    print("Expected path: MyDrive/crop_disease_data/crop_disease_data.zip")
+else:
+    # Extract .zip
+    print(f"Attempting to extract {zip_path} to {extract_path}")
+    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        zip_ref.extractall(extract_path)
+    print("Successfully extracted to:")
+    print(extract_path)
+
+    # verify content
+    print("\nVerifying extracted contents (first 5 items):")
+    extracted_items = os.listdir(extract_path)
+    for i, item in enumerate(extracted_items):
+        if i >= 5:
+            break
+        print(f"- {item}")
+    if not extracted_items:
+        print("No items found in the extracted directory. Extraction might have failed or zip was empty.")
